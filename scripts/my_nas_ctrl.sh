@@ -89,6 +89,25 @@ make_dirs()
     __make_user_skel_dirs__
 }
 
+fix_dirs_mod()
+{
+    chmod 755 ${DATA_PATH}
+    chmod 750 ${DATA_PATH}/${GRP_NAME}
+    chmod 750 ${DATA_PATH}/${GRP_NAME}/${PUBLIC_NAME}
+    chmod -R 775 ${DATA_PATH}/${GRP_NAME}/${PUBLIC_NAME}/*
+    chmod -R 770 ${DATA_PATH}/${GRP_NAME}/${GRP_NAME}
+    local grp_users=$(getent group ${GRP_NAME})
+    local users=(`echo ${grp_users##*:} | sed -e 's/,/ /g'`)
+    for d in ${users} ; do
+        if [[ $d != ${GRP_NAME} ]] && \
+            [[ -d ${DATA_PATH}/${GRP_NAME}/${GRP_NAME}/$d ]];
+            then
+            chmod -R 700 ${DATA_PATH}/${GRP_NAME}/${GRP_NAME}/$d
+        fi
+    done
+    echo "The dirs under ${DATA_PATH} are all fixed."
+}
+
 #########       making users as below     ############
 default_users()
 {
@@ -191,14 +210,16 @@ del_user()
 
 my_help()
 {
-    echo "$0 <init|add|del|passwd> [username]"
+    echo "$0 <init|fix|add|del|passwd> [username]"
 }
 
 main()
 {
     if [[ $# -ne 2 ]] ; then
-        if [[ $1 == 'init' ]]; then
+        if [[ $1 == 'init' ]] && [[ -z $2 ]]; then
             make_dirs
+        elif [[ $1 == 'fix' ]] && [[ -z $2 ]]; then
+            fix_dirs_mod
         else
             my_help
         fi

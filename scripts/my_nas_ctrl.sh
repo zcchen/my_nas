@@ -109,11 +109,19 @@ fix_dirs_mod()
 }
 
 #########       making users as below     ############
+add_groups()
+{
+    echo "Trying to add the groups <${PUBLIC_NAME}> and <${GRP_NAME}>..."
+    groupadd -f ${PUBLIC_NAME}
+    groupadd -f ${GRP_NAME}
+    echo "Added groups <${PUBLIC_NAME}> and <${GRP_NAME}>."
+}
+
 default_users()
 {
     empty_dir=${EMPTY_DIR_GEN}     # empty_dir for the users skel dir.
-    useradd ${PUBLIC_NAME} -g nogroup -k ${empty_dir} -M -s /bin/false -u 2000
-    useradd ${GRP_NAME} -g ${GRP_NAME} -k ${empty_dir} -M -s /bin/false -u 2001
+    useradd ${PUBLIC_NAME} -g nogroup -M -s /bin/false -u 2000
+    useradd ${GRP_NAME} -g ${GRP_NAME} -M -s /bin/false -u 2001
     rmdir ${empty_dir}
 }
 
@@ -218,6 +226,8 @@ main()
     if [[ $# -ne 2 ]] ; then
         if [[ $1 == 'init' ]] && [[ -z $2 ]]; then
             make_dirs
+            add_groups
+            default_users
         elif [[ $1 == 'fix' ]] && [[ -z $2 ]]; then
             fix_dirs_mod
         else

@@ -46,24 +46,24 @@ __make_base_dirs__()
 {
     mkdir -p -m 755 ${DATA_PATH}
     mkdir -p -m 750 ${DATA_PATH}/${GRP_NAME}
-    #chown root:root ${DATA_PATH} ${DATA_PATH}/${GRP_NAME}
+    chown root:root ${DATA_PATH} ${DATA_PATH}/${GRP_NAME}
 }
 __make_public_dirs__()
 {
     mkdir -p -m 750 ${DATA_PATH}/${GRP_NAME}/${PUBLIC_NAME}
-    #chown root:${GRP_NAME} ${DATA_PATH}/${GRP_NAME}/${PUBLIC_NAME}
+    chown root:${GRP_NAME} ${DATA_PATH}/${GRP_NAME}/${PUBLIC_NAME}
     for d in ${PUBLIC_DIRs[@]}; do
         mkdir -p -m 775 ${DATA_PATH}/${GRP_NAME}/${PUBLIC_NAME}/${d}
-        #chown ${PUBLIC_NAME}:${GRP_NAME} ${d}
+        chown ${PUBLIC_NAME}:${GRP_NAME} ${DATA_PATH}/${GRP_NAME}/${PUBLIC_NAME}/${d}
     done
 }
 __make_group_dirs__()
 {
     mkdir -p -m 770 ${DATA_PATH}/${GRP_NAME}/${GRP_NAME}
-    #chown ${GRP_NAME}:${GRP_NAME} ${DATA_PATH}/${GRP_NAME}/${GRP_NAME}
+    chown ${GRP_NAME}:${GRP_NAME} ${DATA_PATH}/${GRP_NAME}/${GRP_NAME}
     for d in ${GRP_DIRs[@]}; do
         mkdir -p -m 770 ${DATA_PATH}/${GRP_NAME}/${GRP_NAME}/${d}
-        #chown ${GRP_NAME}:${GRP_NAME} ${d}
+        chown ${GRP_NAME}:${GRP_NAME} ${DATA_PATH}/${GRP_NAME}/${GRP_NAME}/${d}
     done
 }
 __make_user_skel_dirs__()
@@ -76,7 +76,7 @@ __make_user_skel_dirs__()
     for d in ${USER_SKEL_LNs[@]}; do
         ln -snf ${d##*:} ${d%%:*}
     done
-    #chown -R root:root ${DATA_PATH}/${GRP_NAME}/.skel
+    chown -R root:root ${DATA_PATH}/${GRP_NAME}/.skel
     chmod -R 700 ${DATA_PATH}/${GRP_NAME}/.skel
     cd ${__CURRENT_DIR__}
 }
@@ -111,10 +111,9 @@ fix_dirs_mod()
 #########       making users as below     ############
 add_groups()
 {
-    echo "Trying to add the groups <${PUBLIC_NAME}> and <${GRP_NAME}>..."
-    groupadd -f ${PUBLIC_NAME}
-    groupadd -f ${GRP_NAME}
-    echo "Added groups <${PUBLIC_NAME}> and <${GRP_NAME}>."
+    echo "Trying to add the groups <${GRP_NAME}>..."
+    groupadd -g 2000 -f ${GRP_NAME}
+    echo "Added groups <${GRP_NAME}>."
 }
 
 default_users()
@@ -190,7 +189,7 @@ add_user()
             -m -k ${DATA_PATH}/${GRP_NAME}/.skel/ ${username}
     if [[ $? -eq 0 ]]; then
         chown ${username}:${GRP_NAME} ${DATA_PATH}/${GRP_NAME}/${username}
-        #chmod -R 700 ${DATA_PATH}/${GRP_NAME}/${username}
+        chmod -R 700 ${DATA_PATH}/${GRP_NAME}/${username}
         echo "User <${username}> is added."
     else
         echo "Adding user <${username}> with error. Exiting..."
@@ -205,8 +204,8 @@ del_user()
     if [[ $? -eq 0 ]]; then
         echo "User directory of <${username}> is cleaning."
         smbpasswd -x ${username}
-        chown -r ${GRP_NAME}:${GRP_NAME} ${DATA_PATH}/${GRP_NAME}/${username}
-        #chmod -R 755 ${DATA_PATH}/${GRP_NAME}/${username}
+        chown -R ${GRP_NAME}:${GRP_NAME} ${DATA_PATH}/${GRP_NAME}/${username}
+        chmod 755 ${DATA_PATH}/${GRP_NAME}/${username}
         mv ${DATA_PATH}/${GRP_NAME}/${username} \
             "${DATA_PATH}/${GRP_NAME}/olduser_${username}"
         userdel -rf ${username}
@@ -225,9 +224,9 @@ main()
 {
     if [[ $# -ne 2 ]] ; then
         if [[ $1 == 'init' ]] && [[ -z $2 ]]; then
-            make_dirs
             add_groups
             default_users
+            make_dirs
         elif [[ $1 == 'fix' ]] && [[ -z $2 ]]; then
             fix_dirs_mod
         else

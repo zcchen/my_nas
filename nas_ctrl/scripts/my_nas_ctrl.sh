@@ -1,6 +1,3 @@
-#!/bin/bash
-
-#__config_data__#
 
 EMPTY_DIR_GEN=$(mktemp -d)  # change the empty_dir generate way as you like
 
@@ -21,7 +18,8 @@ __make_public_dirs__()
     chown root:${GRP_NAME} ${DATA_PATH}/${GRP_NAME}/${PUBLIC_NAME}
     for d in ${PUBLIC_DIRs[@]}; do
         mkdir -p -m 775 ${DATA_PATH}/${GRP_NAME}/${PUBLIC_NAME}/${d}
-        chown ${PUBLIC_NAME}:${GRP_NAME} ${DATA_PATH}/${GRP_NAME}/${PUBLIC_NAME}/${d}
+        chown root:${GRP_NAME} ${DATA_PATH}/${GRP_NAME}/${PUBLIC_NAME}/${d}
+        setfacl -d -m group::rwx ${DATA_PATH}/${GRP_NAME}/${PUBLIC_NAME}/${d}
     done
 }
 __make_group_dirs__()
@@ -31,6 +29,7 @@ __make_group_dirs__()
     for d in ${GRP_DIRs[@]}; do
         mkdir -p -m 770 ${DATA_PATH}/${GRP_NAME}/${GRP_NAME}/${d}
         chown ${GRP_NAME}:${GRP_NAME} ${DATA_PATH}/${GRP_NAME}/${GRP_NAME}/${d}
+        setfacl -d -m group::rwx ${DATA_PATH}/${GRP_NAME}/${GRP_NAME}/${d}
     done
 }
 __make_user_skel_dirs__()
@@ -86,8 +85,8 @@ add_groups()
 default_users()
 {
     empty_dir=${EMPTY_DIR_GEN}     # empty_dir for the users skel dir.
-    useradd ${PUBLIC_NAME} -g nogroup -M -s /bin/false -u 2000
-    useradd ${GRP_NAME} -g ${GRP_NAME} -M -s /bin/false -u 2001
+    #useradd ${PUBLIC_NAME} -g nogroup -M -s /bin/false -u 2000
+    useradd ${GRP_NAME} -g ${GRP_NAME} -M -s /bin/false -u 2000
     rmdir ${empty_dir}
 }
 

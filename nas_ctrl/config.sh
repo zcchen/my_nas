@@ -33,3 +33,6 @@ USER_SKEL_LNs=( \
 ANONYMOUS_UPLOAD="upload"       # anonymous upload name
 UPLOAD_DIR='upload'
 
+NETWORK_CARD='bond0'
+LOCAL_NETWORK='192.168.1.0/24'
+

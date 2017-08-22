@@ -82,10 +82,11 @@ client -> nas.doname -> NAS
 --------
 ### sftp
 + sftp chrootDirectory: /data/family
-+ 默认的写入权限是：600。
++ 默认的写入权限是：640。
 
 ### smb
 + 最重要的是，针对[%U]目录，打开symlinks支持。
++ 默认的写入权限是：640。
 + 同步Unix和smb密码。
 
 ### syncthing

@@ -3,8 +3,7 @@ BUILDDIR   = build
 
 all: make_dir scripts
 
-
-scripts: my_nas_ctrl.sh snapper_set.sh smb.conf
+scripts: my_nas_ctrl.sh snapper_set.sh smb.conf sshd_config
 
 my_nas_ctrl.sh:
 	@echo "Generating file <$(@)>..."
@@ -23,6 +22,12 @@ snapper_set.sh:
 smb.conf:
 	@echo "Generating file <$(@)>..."
 	samba/generate.sh ${CONFIG_SH} > ${BUILDDIR}/${@}
+	chmod 644 ${BUILDDIR}/$(@)
+	@echo
+
+sshd_config:
+	@echo "Generating file <$(@)>..."
+	sshd/generate.sh ${CONFIG_SH} > ${BUILDDIR}/${@}
 	chmod 644 ${BUILDDIR}/$(@)
 	@echo
 

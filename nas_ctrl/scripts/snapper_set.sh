@@ -16,8 +16,8 @@ all_configs=(
 )
 
 for i in ${name_path}; do
-    #config_name=${i%%:*}
-    #config_path=${i##*:}
+    config_name=${i%%:*}
+    config_path=${i##*:}
     #echo "config_names: ${config_name}"
     #echo "config_paths: ${config_path}"
     snapper -c ${config_name} create-config ${config_path}

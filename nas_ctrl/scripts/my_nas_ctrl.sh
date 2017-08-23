@@ -129,6 +129,7 @@ passwd_user()
     local username=$1
     __test_user_exist ${username}
     if [[ $? -eq 0 ]]; then
+        __get_passwd ${username} new_passwd
         echo "-----Unix passwd Setting-----"
         (echo ${new_passwd}; echo ${new_passwd}) | passwd ${username}
         echo "-----Samba passwd Setting-----"
@@ -151,10 +152,6 @@ add_user()
     if [[ $? -ne 1 ]]; then
         exit 0
     fi
-    __get_passwd ${username} new_passwd
-    if [[ $? -ne 0 ]]; then
-        exit 0
-    fi
     useradd -b ${DATA_PATH}/${GRP_NAME} -g ${GRP_NAME} -s /bin/false \
             -m -k ${DATA_PATH}/${GRP_NAME}/.skel/ ${username}
     if [[ $? -eq 0 ]]; then
@@ -164,6 +161,12 @@ add_user()
     else
         echo "Adding user <${username}> with error. Exiting..."
         return 1
+    fi
+    passwd_user ${username}
+    if [[ $? -ne 0 ]]; then
+        userdel -rf ${username}
+        rm -rf ${DATA_PATH}/${GRP_NAME}/${username}
+        exit 0
     fi
 }
 

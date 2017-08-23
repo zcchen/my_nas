@@ -7,39 +7,45 @@ scripts: my_nas_ctrl.sh snapper_set.sh smb.conf sshd_config
 
 my_nas_ctrl.sh:
 	@echo "Generating file <$(@)>..."
-	echo -e "#!/bin/bash\n" > ${BUILDDIR}/$(@)
-	cat ${CONFIG_SH} >> ${BUILDDIR}/$(@)
-	cat scripts/my_nas_ctrl.sh >> ${BUILDDIR}/$(@)
-	chmod 755 ${BUILDDIR}/$(@)
+	echo -e "#!/bin/bash\n" > ${BUILDDIR}/usr/bin/$(@)
+	cat ${CONFIG_SH} >> ${BUILDDIR}/usr/bin/$(@)
+	cat scripts/my_nas_ctrl.sh >> ${BUILDDIR}/usr/bin/$(@)
+	chmod 755 ${BUILDDIR}/usr/bin/$(@)
 	@echo
 
 snapper_set.sh:
 	@echo "Generating file <$(@)>..."
-	cp scripts/snapper_set.sh ${BUILDDIR}/$(@)
-	chmod 755 ${BUILDDIR}/$(@)
+	cp scripts/snapper_set.sh ${BUILDDIR}/usr/bin/$(@)
+	chmod 755 ${BUILDDIR}/usr/bin/$(@)
 	@echo
 
 smb.conf:
 	@echo "Generating file <$(@)>..."
-	samba/generate.sh ${CONFIG_SH} > ${BUILDDIR}/${@}
-	chmod 644 ${BUILDDIR}/$(@)
+	samba/generate.sh ${CONFIG_SH} > ${BUILDDIR}/etc/samba/${@}
+	chmod 644 ${BUILDDIR}/etc/samba/${@}
 	@echo
 
 sshd_config:
 	@echo "Generating file <$(@)>..."
-	sshd/generate.sh ${CONFIG_SH} > ${BUILDDIR}/${@}
-	chmod 644 ${BUILDDIR}/$(@)
+	sshd/generate.sh ${CONFIG_SH} > ${BUILDDIR}/etc/ssh/${@}
+	chmod 644 ${BUILDDIR}/etc/ssh/${@}
 	@echo
 
 install: backup
+	cp ${BUILDDIR} /
+	@echo "The NAS setting is installed..."
 
 backup:
-	mkdir -p /etc/my_nas/backup
+	mkdir -p /etc/my_nas/backup/{bin,conf}
+	cp /usr/bin/{my_nas_ctrl.sh,snapper_set.sh} /etc/my_nas/backup/bin
+	cp /etc/samba/smb.conf /etc/ssh/sshd_config /etc/my_nas/backup/conf
 
 clean:
 	-rm -rf ${BUILDDIR}
 
 make_dir:
-	mkdir -p ${BUILDDIR}/
+	mkdir -p ${BUILDDIR}/usr/bin
+	mkdir -p ${BUILDDIR}/etc/samba
+	mkdir -p ${BUILDDIR}/etc/ssh
 	@echo
 

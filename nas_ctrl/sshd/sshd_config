@@ -57,7 +57,7 @@ Subsystem	sftp	/usr/lib/openssh/sftp-server
 #	PermitTTY no
 #	ForceCommand cvs server
 Match Group __GRP_NAME__
-    ChrootDirectory __DATA_PATH__
+    ChrootDirectory __DATA_PATH__/__GRP_NAME__
     X11Forwarding no
     AllowTcpForwarding no
     PermitTTY no

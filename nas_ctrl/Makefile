@@ -7,7 +7,7 @@ scripts: my_nas_ctrl.sh snapper_set.sh smb.conf sshd_config
 
 my_nas_ctrl.sh:
 	@echo "Generating file <$(@)>..."
-	echo -e "#!/bin/bash\n" > ${BUILDDIR}/usr/bin/$(@)
+	echo "#!/bin/bash\n" > ${BUILDDIR}/usr/bin/$(@)
 	cat ${CONFIG_SH} >> ${BUILDDIR}/usr/bin/$(@)
 	cat scripts/my_nas_ctrl.sh >> ${BUILDDIR}/usr/bin/$(@)
 	chmod 755 ${BUILDDIR}/usr/bin/$(@)
@@ -32,13 +32,13 @@ sshd_config:
 	@echo
 
 install: backup
-	cp ${BUILDDIR} /
+	cp -R ${BUILDDIR}/* /
 	@echo "The NAS setting is installed..."
 
 backup:
 	mkdir -p /etc/my_nas/backup/{bin,conf}
-	cp /usr/bin/{my_nas_ctrl.sh,snapper_set.sh} /etc/my_nas/backup/bin
-	cp /etc/samba/smb.conf /etc/ssh/sshd_config /etc/my_nas/backup/conf
+	-cp /usr/bin/{my_nas_ctrl.sh,snapper_set.sh} /etc/my_nas/backup/bin
+	-cp /etc/samba/smb.conf /etc/ssh/sshd_config /etc/my_nas/backup/conf
 
 clean:
 	-rm -rf ${BUILDDIR}

@@ -9,12 +9,12 @@ EMPTY_DIR_GEN=$(mktemp -d)  # change the empty_dir generate way as you like
 __make_base_dirs__()
 {
     mkdir -p -m 755 ${DATA_PATH}
-    mkdir -p -m 750 ${DATA_PATH}/${GRP_NAME}
+    mkdir -p -m 755 ${DATA_PATH}/${GRP_NAME}
     chown root:root ${DATA_PATH} ${DATA_PATH}/${GRP_NAME}
 }
 __make_public_dirs__()
 {
-    mkdir -p -m 750 ${DATA_PATH}/${GRP_NAME}/${PUBLIC_NAME}
+    mkdir -p -m 755 ${DATA_PATH}/${GRP_NAME}/${PUBLIC_NAME}
     chown root:${GRP_NAME} ${DATA_PATH}/${GRP_NAME}/${PUBLIC_NAME}
     for d in ${PUBLIC_DIRs[@]}; do
         mkdir -p -m 775 ${DATA_PATH}/${GRP_NAME}/${PUBLIC_NAME}/${d}
@@ -132,8 +132,12 @@ passwd_user()
         echo "-----Unix passwd Setting-----"
         (echo ${new_passwd}; echo ${new_passwd}) | passwd ${username}
         echo "-----Samba passwd Setting-----"
-        (echo ${new_passwd}; echo ${new_passwd}) | smbpasswd -a -s ${username}
+        (echo ${new_passwd}; echo ${new_passwd}) | smbpasswd -a ${username}
         echo "The password of <${username}> is updated successfully."
+        if [[ $? -ne 0 ]]; then
+            echo "Updating the password of user <${username}> with error. Exiting..."
+            return 1
+        fi
     else
         echo "Updating the password of user <${username}> with error. Exiting..."
         return 1

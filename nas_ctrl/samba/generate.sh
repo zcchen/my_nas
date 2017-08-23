@@ -13,6 +13,7 @@ sed_cmd=( \
     "s,__GRP_NAME__,${GRP_NAME},g;" \
     "s,__NETWORK_CARD__,${NETWORK_CARD},g;" \
     "s,__LOCAL_NETWORK__,${LOCAL_NETWORK},g;" \
+    "s,//,/,g;"
 )
 
 sed -e "${sed_cmd[*]}" ${realbase}/smb.conf

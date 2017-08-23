@@ -12,6 +12,7 @@ sed_cmd=( \
     "s,__SSHD_PORT__,${SSHD_PORT},g;" \
     "s,__DATA_PATH__,${DATA_PATH},g;" \
     "s,__GRP_NAME__,${GRP_NAME},g;" \
+    "s,//,/,g;"
 )
 
 sed -e "${sed_cmd[*]}" ${realbase}/sshd_config

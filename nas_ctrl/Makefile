@@ -36,8 +36,10 @@ install: backup
 	@echo "The NAS setting is installed..."
 
 backup:
-	mkdir -p /etc/my_nas/backup/{bin,conf}
-	-cp /usr/bin/{my_nas_ctrl.sh,snapper_set.sh} /etc/my_nas/backup/bin
+	mkdir -p /etc/my_nas/backup/bin
+	mkdir -p /etc/my_nas/backup/conf
+	-cp /usr/bin/my_nas_ctrl.sh /etc/my_nas/backup/bin
+	-cp /usr/bin/snapper_set.sh /etc/my_nas/backup/bin
 	-cp /etc/samba/smb.conf /etc/ssh/sshd_config /etc/my_nas/backup/conf
 
 clean:

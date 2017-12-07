@@ -40,6 +40,10 @@ install:
 	cp -i ${BUILDDIR}/dnscrypt/dnscrypt-proxy.socket /lib/systemd/system/dnscrypt-proxy.socket
 	chmod 644 /lib/systemd/system/dnscrypt-proxy.socket
 
+restart:
+	systemctl daemon-reload
+	systemctl restart unbound dnscrypt-proxy
+
 make_dir:
 	mkdir -p ${BUILDDIR}/
 

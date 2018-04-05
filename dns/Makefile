@@ -3,10 +3,10 @@ DNS_SERVER = 114.114.114.114
 LOCAL_NET  = 192.168.1.0/24
 LOCAL_NAS  = 192.168.1.5
 
-PAK_INSTALL= apt install unbound dnscrypt-proxy
+BUILD_PKG  = apt install curl git unbound dnscrypt-proxy
 BUILDDIR   = build
 
-all: unbound dnscrypt dns_china
+all: prepare unbound dnscrypt dns_china
 	find ${BUILDDIR} -type d -print0 | xargs -0 chmod 755
 	find ${BUILDDIR} -type f -print0 | xargs -0 chmod 644
 	@echo "Make is Done..."
@@ -31,8 +31,10 @@ dns_china: unbound
 	cd dnsmasq-china-list && make SERVER=${DNS_SERVER} unbound
 	cp dnsmasq-china-list/*.unbound.* ${BUILDDIR}/unbound/unbound.conf.d
 
+prepare:
+	sudo ${BUILD_PKG}
+
 install:
-	${PAK_INSTALL}
 	cp -iR ${BUILDDIR}/unbound/* /etc/unbound
 	chmod 644 /etc/unbound/unbound.conf /etc/unbound/root.hints /etc/unbound/unbound.conf.d/*
 	cp -i ${BUILDDIR}/dnscrypt/dnscrypt-proxy.conf /etc/dnscrypt-proxy/dnscrypt-proxy.conf

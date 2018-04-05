@@ -1,4 +1,4 @@
-NAS_DONAME = nas.example.com
+NAS_DONAME = nas.zcchen.me
 DNS_SERVER = 114.114.114.114
 LOCAL_NET  = 192.168.1.0/24
 LOCAL_NAS  = 192.168.1.5

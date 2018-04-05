@@ -11,6 +11,7 @@ my_nas_ctrl.sh:
 	cat ${CONFIG_SH} >> ${BUILDDIR}/usr/bin/$(@)
 	cat scripts/my_nas_ctrl.sh >> ${BUILDDIR}/usr/bin/$(@)
 	chmod 755 ${BUILDDIR}/usr/bin/$(@)
+	cp scripts/nas_fix.* ${BUILDDIR}/lib/systemd/system/
 	@echo
 
 snapper_set.sh:
@@ -33,6 +34,9 @@ sshd_config:
 
 install: backup
 	cp -rf ${BUILDDIR}/* /
+	systemctl daemon-reload
+	systemctl restart nas_fix.timer
+	systemctl enable nas_fix.timer
 	@echo "The NAS setting is installed..."
 
 backup:
@@ -49,5 +53,6 @@ make_dir:
 	mkdir -p ${BUILDDIR}/usr/bin
 	mkdir -p ${BUILDDIR}/etc/samba
 	mkdir -p ${BUILDDIR}/etc/ssh
+	mkdir -p ${BUILDDIR}/lib/systemd/system
 	@echo
 

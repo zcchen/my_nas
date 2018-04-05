@@ -1,0 +1,6 @@
+[Unit]
+Description=Run NAS data permission fixing program
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/my_nas_ctrl.sh fix

@@ -58,8 +58,8 @@ make_dirs()
 fix_dirs_mod()
 {
     chmod 755 ${DATA_PATH}
-    chmod 750 ${DATA_PATH}/${GRP_NAME}
-    chmod 750 ${DATA_PATH}/${GRP_NAME}/${PUBLIC_NAME}
+    chmod 755 ${DATA_PATH}/${GRP_NAME}
+    chmod 755 ${DATA_PATH}/${GRP_NAME}/${PUBLIC_NAME}
     chmod -R 775 ${DATA_PATH}/${GRP_NAME}/${PUBLIC_NAME}/*
     chmod -R 770 ${DATA_PATH}/${GRP_NAME}/${GRP_NAME}
     local grp_users=$(getent group ${GRP_NAME})

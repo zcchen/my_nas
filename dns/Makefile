@@ -41,6 +41,8 @@ install:
 	chmod 644 /etc/dnscrypt-proxy/dnscrypt-proxy.conf
 	cp -i ${BUILDDIR}/dnscrypt/dnscrypt-proxy.socket /lib/systemd/system/dnscrypt-proxy.socket
 	chmod 644 /lib/systemd/system/dnscrypt-proxy.socket
+	systemctl enable unbound
+	systemctl enable dnscrypt-proxy
 
 restart:
 	systemctl daemon-reload

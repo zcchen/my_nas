@@ -32,7 +32,7 @@ sshd_config:
 	@echo
 
 install: backup
-	cp -R ${BUILDDIR}/* /
+	cp -rf ${BUILDDIR}/* /
 	@echo "The NAS setting is installed..."
 
 backup:

@@ -1,5 +1,11 @@
 .*sw*
 *~
 
+*.zip
+*.tar
+*.gz
+*.rar
+*.deb
+
 build/
 

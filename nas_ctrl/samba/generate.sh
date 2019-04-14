@@ -48,6 +48,11 @@ cat << EOF > /tmp/smb.conf.example
     map to guest = bad user
     security = user
     guest account = nobody
+    # For winXP work around
+    server min protocol = NT1
+    #lanman auth = yes
+    ntlm auth = yes
+
 
     ############ Misc ############
     # Allow users who've been granted usershare privileges to create

@@ -1,4 +1,4 @@
-CONFIG_SH  = config.sh
+CONFIG_SH  = ../config.sh
 BUILDDIR   = build
 
 all: make_dir scripts
@@ -16,19 +16,19 @@ my_nas_ctrl.sh:
 
 snapper_set.sh:
 	@echo "Generating file <$(@)>..."
-	cp scripts/snapper_set.sh ${BUILDDIR}/usr/bin/$(@)
+	./make_snapper-set.sh ${CONFIG_SH} > ${BUILDDIR}/usr/bin/$(@)
 	chmod 755 ${BUILDDIR}/usr/bin/$(@)
 	@echo
 
 smb.conf:
 	@echo "Generating file <$(@)>..."
-	samba/generate.sh ${CONFIG_SH} > ${BUILDDIR}/etc/samba/${@}
+	./samba/generate.sh ${CONFIG_SH} > ${BUILDDIR}/etc/samba/${@}
 	chmod 644 ${BUILDDIR}/etc/samba/${@}
 	@echo
 
 sshd_config:
 	@echo "Generating file <$(@)>..."
-	sshd/generate.sh ${CONFIG_SH} > ${BUILDDIR}/etc/ssh/${@}
+	./sshd/generate.sh ${CONFIG_SH} > ${BUILDDIR}/etc/ssh/${@}
 	chmod 644 ${BUILDDIR}/etc/ssh/${@}
 	@echo
 

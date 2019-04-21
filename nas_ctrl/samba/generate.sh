@@ -9,14 +9,10 @@ realconfig=$(realpath $1)
 source ${realconfig}
 
 sed_cmd=( \
-    "s,__DATA_PATH__,${DATA_PATH},g;" \
-    "s,__GRP_NAME__,${GRP_NAME},g;" \
-    "s,__NETWORK_CARD__,${NETWORK_CARD},g;" \
-    "s,__LOCAL_NETWORK__,${LOCAL_NETWORK},g;" \
     "s,//,/,g;"
 )
 
-cat << EOF > /tmp/smb.conf.example
+cat << EOF | sed -e "${sed_cmd[*]}"
 [global]
 
     ## Browsing/Identification ###
@@ -25,9 +21,9 @@ cat << EOF > /tmp/smb.conf.example
     netbios name = MY_NAS
 
     #### Networking ####
-    interfaces = __NETWORK_CARD__ 127.0.0.0/8 __LOCAL_NETWORK__
+    interfaces = ${NETWORK_CARD} 127.0.0.0/8 ${LOCAL_NETWORK}
     bind interfaces only = yes
-    hosts allow = __LOCAL_NETWORK__ 127.0.0.1
+    hosts allow = ${LOCAL_NETWORK} 127.0.0.1
 
     #### Debugging/Accounting ####
     log file = /var/log/samba/log.%m
@@ -76,10 +72,10 @@ cat << EOF > /tmp/smb.conf.example
 
 [public]
     comment = Public Directories
-    path = /__DATA_PATH__/__GRP_NAME__/public
+    path = /${DATA_PATH}/${GRP_NAME}/public
     browseable = yes
     writable = yes
-    write list = @__GRP_NAME__
+    write list = @${GRP_NAME}
     create mask = 0755
     directory mask = 0755
     guest ok = yes
@@ -87,12 +83,12 @@ cat << EOF > /tmp/smb.conf.example
 
 [family]
     comment = Family Directories
-    path = /__DATA_PATH__/__GRP_NAME__/family
+    path = /${DATA_PATH}/${GRP_NAME}/family
     browseable = yes
     writable = yes
     create mask = 0770
     directory mask = 0770
-    ;valid users = @__GRP_NAME__
+    ;valid users = @${GRP_NAME}
 
 # Uncomment to allow remote administration of Windows print drivers.
 # You may need to replace 'lpadmin' with the name of the group your
@@ -102,4 +98,5 @@ cat << EOF > /tmp/smb.conf.example
 ;   write list = root, @lpadmin
 EOF
 
-sed -e "${sed_cmd[*]}" /tmp/smb.conf.example
+#sed -e "${sed_cmd[*]}" /tmp/smb.conf.example
+#rm /tmp/smb.conf.example

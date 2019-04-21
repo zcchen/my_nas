@@ -1,11 +1,11 @@
 CONFIG_SH  = ../config.sh
 BUILDDIR   = build
 
-all: make_dir scripts
+all: scripts
 
 scripts: my_nas_ctrl.sh snapper_set.sh smb.conf sshd_config
 
-my_nas_ctrl.sh:
+my_nas_ctrl.sh: make_dir
 	@echo "Generating file <$(@)>..."
 	echo "#!/bin/bash\n" > ${BUILDDIR}/usr/bin/$(@)
 	cat ${CONFIG_SH} >> ${BUILDDIR}/usr/bin/$(@)
@@ -14,21 +14,21 @@ my_nas_ctrl.sh:
 	cp scripts/nas_fix.* ${BUILDDIR}/lib/systemd/system/
 	@echo
 
-snapper_set.sh:
+snapper_set.sh: make_dir
 	@echo "Generating file <$(@)>..."
-	./make_snapper-set.sh ${CONFIG_SH} > ${BUILDDIR}/usr/bin/$(@)
+	bash ./make_snapper-set.sh ${CONFIG_SH} > ${BUILDDIR}/usr/bin/$(@)
 	chmod 755 ${BUILDDIR}/usr/bin/$(@)
 	@echo
 
-smb.conf:
+smb.conf: make_dir
 	@echo "Generating file <$(@)>..."
-	./samba/generate.sh ${CONFIG_SH} > ${BUILDDIR}/etc/samba/${@}
+	bash ./samba/generate.sh ${CONFIG_SH} > ${BUILDDIR}/etc/samba/${@}
 	chmod 644 ${BUILDDIR}/etc/samba/${@}
 	@echo
 
-sshd_config:
+sshd_config: make_dir
 	@echo "Generating file <$(@)>..."
-	./sshd/generate.sh ${CONFIG_SH} > ${BUILDDIR}/etc/ssh/${@}
+	bash ./sshd/generate.sh ${CONFIG_SH} > ${BUILDDIR}/etc/ssh/${@}
 	chmod 644 ${BUILDDIR}/etc/ssh/${@}
 	@echo
 
@@ -49,10 +49,8 @@ backup:
 clean:
 	-rm -rf ${BUILDDIR}
 
-make_dir:
-	mkdir -p ${BUILDDIR}/usr/bin
-	mkdir -p ${BUILDDIR}/etc/samba
-	mkdir -p ${BUILDDIR}/etc/ssh
-	mkdir -p ${BUILDDIR}/lib/systemd/system
-	@echo
+make_dir: ${BUILDDIR}/usr/bin ${BUILDDIR}/etc/samba ${BUILDDIR}/etc/ssh ${BUILDDIR}/lib/systemd/system
+
+${BUILDDIR}/%:
+	mkdir -p $@
 

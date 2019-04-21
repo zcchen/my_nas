@@ -1,3 +1,14 @@
+#!/bin/bash
+
+if [[ -z $3 ]]; then
+    echo "$0 <config.sh> <unbound.conf> <unbound.conf.d/local_data.conf>"
+    exit 1
+fi
+realbase=$(realpath $(dirname $0))
+realconfig=$(realpath $1)
+source ${realconfig}
+
+cat << EOF > $2
 server:
     num-threads: 1 # 线程数可以修改为物理核心数
     interface: 0.0.0.0 # 侦听所有 IPv4 地址
@@ -17,7 +28,7 @@ server:
     do-udp: yes
     do-tcp: yes
     tcp-upstream: no # 默认是 no，隧道状态比较稳的话也不需要写 yes。一些情况下强制使用 tcp 连上游的话写 yes
-    access-control: __LOCAL_NET__ allow # 本机用的话建议设置 127.0.0.0/8 allow，局域网用适当调整
+    access-control: ${LOCAL_NETWORK} allow # 本机用的话建议设置 127.0.0.0/8 allow，局域网用适当调整
     root-hints: "/etc/unbound/root.hints" # 没有的话在 ftp://FTP.INTERNIC.NET/domain/named.cache 下载一份
     hide-identity: yes # 不返回对 id.server 和 hostname.bind 的查询。
     hide-version: yes # 不返回对 version.server 和 version.bind 的查询。
@@ -37,3 +48,11 @@ include: "/etc/unbound/unbound.conf.d/*.china.unbound.conf"
 forward-zone:
     name: "."
     forward-addr: 127.0.0.1@53535
+EOF
+
+cat << EOF > $3
+private-address: ${LOCAL_NETWORK}
+local-zone: "${NAS_DONAME}." static
+local-data: "${NAS_DONAME}. IN A ${LOCAL_NAS_IP}"
+local-data-ptr: "${LOCAL_NAS_IP} ${NAS_DONAME}"
+EOF

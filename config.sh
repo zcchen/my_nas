@@ -35,5 +35,14 @@ UPLOAD_DIR='upload'
 
 NETWORK_CARD='bond0'
 LOCAL_NETWORK='192.168.1.0/24'
-SSHD_PORT=22
+LOCAL_NAS_IP="192.168.1.5"
+NAS_DONAME="nas.zcchen.me"
+DNS_SERVER="114.114.114.114"
+SSHD_PORT_1=22
+SSHD_PORT_2=22
 
+SNAP_USER="admin"
+SNAP_PATH=( \
+    "root:/"
+    "nas_data:/data/data"
+)

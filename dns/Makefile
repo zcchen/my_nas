@@ -1,10 +1,7 @@
-NAS_DONAME = nas.zcchen.me
-DNS_SERVER = 114.114.114.114
-LOCAL_NET  = 192.168.1.0/24
-LOCAL_NAS  = 192.168.1.5
-
+CONFIG_SH  = ../config.sh
 BUILD_PKG  = apt install curl git unbound dnscrypt-proxy
 BUILDDIR   = build
+DNS_CHINA  = dnsmasq-china-list
 
 all: prepare unbound dnscrypt dns_china
 	find ${BUILDDIR} -type d -print0 | xargs -0 chmod 755
@@ -14,8 +11,9 @@ all: prepare unbound dnscrypt dns_china
 unbound: make_dir
 	mkdir -p ${BUILDDIR}/unbound/unbound.conf.d/
 	curl ftp://FTP.INTERNIC.NET/domain/named.cache -o ${BUILDDIR}/unbound/root.hints
-	sed -e "s,__LOCAL_NET__,${LOCAL_NET},g" unbound/unbound-example.conf > ${BUILDDIR}/unbound/unbound.conf
-	sed -e "s,__LOCAL_NET__,${LOCAL_NET},g; s,__NAS_DONAME__,${NAS_DONAME},g; s,__LOCAL_NAS__,${LOCAL_NAS},g;" unbound/local_data-example.conf > ${BUILDDIR}/unbound/unbound.conf.d/local_data.conf
+	unbound/unbound_set.sh ${CONFIG_SH} \
+		${BUILDDIR}/unbound/unbound.conf \
+		${BUILDDIR}/unbound/unbound.conf.d/local_data.conf
 
 dnscrypt: make_dir
 	mkdir -p ${BUILDDIR}/dnscrypt/
@@ -23,13 +21,13 @@ dnscrypt: make_dir
 	sed -f dnscrypt-sed/dnscrypt-systemd.sed /lib/systemd/system/dnscrypt-proxy.socket > ${BUILDDIR}/dnscrypt/dnscrypt-proxy.socket
 
 dns_china: unbound
-	if [ -d dnsmasq-china-list/.git ]; then \
-	    cd dnsmasq-china-list && git pull; \
+	if [ -d ${DNS_CHINA}/.git ]; then \
+	    cd ${DNS_CHINA} && git pull; \
 	else \
-	    git clone --depth 1 "git://github.com/felixonmars/dnsmasq-china-list"; \
+	    git clone --depth 1 "git://github.com/felixonmars/dnsmasq-china-list" ${DNS_CHINA}; \
 	fi
-	cd dnsmasq-china-list && make SERVER=${DNS_SERVER} unbound
-	cp dnsmasq-china-list/*.unbound.* ${BUILDDIR}/unbound/unbound.conf.d
+	cd ${DNS_CHINA} && make SERVER=${DNS_SERVER} unbound
+	cp ${DNS_CHINA}/*.unbound.* ${BUILDDIR}/unbound/unbound.conf.d
 
 prepare:
 	sudo ${BUILD_PKG}
@@ -53,3 +51,4 @@ make_dir:
 
 clean:
 	-rm -rf ${BUILDDIR}
+	-rm -rf ${DNS_CHINA}

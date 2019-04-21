@@ -1,7 +1,7 @@
 GRP_NAME="family"               # the group name
 PUBLIC_NAME="public"
 
-DATA_PATH='/tmp/data/'
+DATA_PATH='/data/data/'
 PUBLIC_DIRs=( \
     "Movies_电影"
     "Music_音乐"
@@ -30,8 +30,8 @@ USER_SKEL_LNs=( \
     "Photos_照片/family_家庭照片:../../${GRP_NAME}/Photos_照片"
 )   # ${DATA_PATH}/${GRP_NAME}/.skel/
 
-ANONYMOUS_UPLOAD="upload"       # anonymous upload name
-UPLOAD_DIR='upload'
+ANONYMOUS_UPLOAD="upload"       # anonymous upload name (NOT used now)
+UPLOAD_DIR='upload'             # NOT used now
 
 NETWORK_CARD='bond0'
 LOCAL_NETWORK='192.168.1.0/24'
@@ -44,5 +44,5 @@ SSHD_PORT_2=22
 SNAP_USER="admin"
 SNAP_PATH=( \
     "root:/"
-    "nas_data:/data/data"
+    "nas_data:${DATA_PATH}"
 )

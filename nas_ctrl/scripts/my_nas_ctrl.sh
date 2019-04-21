@@ -90,7 +90,7 @@ default_users()
     rmdir ${empty_dir}
 }
 
-function __get_passwd() {
+__get_passwd() {
     # get_passwd <username> <passwd_var>
     read -s -p "Enter NEW Unix and Samba Password for <$1>:" passwd_1
     echo
@@ -108,7 +108,7 @@ function __get_passwd() {
     echo
 }
 
-function __test_user_exist()
+__test_user_exist()
 {
     local username=$1
     if [[ -z ${username} ]]; then
